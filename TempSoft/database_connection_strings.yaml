@@ -1,0 +1,7 @@
+# Datos de conexión a PostgreSQL para el backend Django:
+
+Host: 'ec2-34-230-115-172.compute-1.amazonaws.com'
+Database: 'd688rc1g9j8dii'
+User: 'xtljxvafmvyhfo'
+Port: '5432'
+Password: '09eb856d2f0024bb677cb4601287e18078d0142a1d233924c44794d5e1c8b915'
