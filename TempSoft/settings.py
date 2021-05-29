@@ -13,7 +13,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
+import dj_database_url
 import django_heroku
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -78,14 +80,9 @@ WSGI_APPLICATION = 'TempSoft.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'd688rc1g9j8dii',
-        'USER': 'xtljxvafmvyhfo',
-        'PASSWORD': '09eb856d2f0024bb677cb4601287e18078d0142a1d233924c44794d5e1c8b915',
-        'HOST': 'ec2-34-230-115-172.compute-1.amazonaws.com',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL')
+    )
 }
 
 # Password validation
