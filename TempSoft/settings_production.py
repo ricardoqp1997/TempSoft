@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
+import dj_database_url
 import django_heroku
 from decouple import config
 
@@ -23,10 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-cd4ov3zo=&h$^vv%_tg13doa$kkjse_)i$p4s%!6ng$cn3*joo'
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-cd4ov3zo=&h$^vv%_tg13doa$kkjse_)i$p4s%!6ng$cn3*joo')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DJANGO_DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = ['*']
 
@@ -79,14 +80,9 @@ WSGI_APPLICATION = 'TempSoft.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'd6uksbnki8geon',
-        'USER': 'ewjjrxvcreneoq',
-        'PASSWORD': 'dee2774baf8875bd521fdcbc11da465a3cc24fa247cb224e5423bc4b244e96be',
-        'HOST': 'ec2-54-90-211-192.compute-1.amazonaws.com',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL')
+    )
 }
 
 # Password validation
@@ -140,6 +136,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Activate Django-Heroku.
 django_heroku.settings(locals())
-
-if config('DJANGO_PRODUCTION_ENV', default=False, cast=bool):
-    from .settings_production import *
