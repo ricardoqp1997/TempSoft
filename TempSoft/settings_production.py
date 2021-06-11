@@ -142,7 +142,8 @@ django_heroku.settings(locals())
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000/",
-    "http://127.0.0.1:3000/"
+    "http://127.0.0.1:3000/",
+    "https://temperatura-arquitectura.herokuapp.com/",
 ]
 
 CORS_ALLOW_HEADERS = [
@@ -156,7 +157,6 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
-
 
 CORS_ALLOW_METHODS = [
     'DELETE',
