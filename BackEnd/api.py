@@ -135,7 +135,7 @@ class CiudadViewSet(viewsets.ModelViewSet):
             ciudad = Ciudad.objects.filter(nombre_ciudad=params['pk'])
             serializer = CiudadSerializer(ciudad, many=True)
 
-            return Response(serializer.data)
+            return Response(serializer.data.pop())
 
     # POST
     def create(self, request, *args, **kwargs):

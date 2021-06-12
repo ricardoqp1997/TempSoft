@@ -33,6 +33,7 @@ class TemperaturaHumedadSerializer(serializers.ModelSerializer):
     class Meta:
         model = TemperaturaHumedad
         fields = [
+            'fecha_registro',
             'ciudad',
             'pais',
             'temperatura',
