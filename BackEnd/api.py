@@ -236,17 +236,129 @@ class CiudadViewSet(viewsets.ModelViewSet):
 # TemperaturaHumedad ViewSet
 class TemperaturaHumedadViewSet(viewsets.ModelViewSet):
 
-    queryset = TemperaturaHumedad.objects.all()
-
-    permission_classes = [
-        permissions.AllowAny
-    ]
-
     serializer_class = TemperaturaHumedadSerializer
 
+    def get_queryset(self):
+
+        temperatura_humedad = TemperaturaHumedad.objects.all()
+        return temperatura_humedad
+
+    # GET
+    def retrieve(self, request, *args, **kwargs):
+
+        params = kwargs
+        print(params['pk'])
+
+        try:
+            ciudad = Ciudad.objects.get(nombre_ciudad=params['pk'])
+            temperatura_humedad = TemperaturaHumedad.objects.filter(ciudad=ciudad)
+            serializer = TemperaturaHumedadSerializer(temperatura_humedad, many=True)
+
+            return Response(serializer.data)
+
+        except:
+            ciudad = Ciudad.objects.get(id=params['pk'])
+            temperatura_humedad = TemperaturaHumedad.objects.filter(ciudad=ciudad)
+            serializer = CiudadSerializer(temperatura_humedad, many=True)
+
+            return Response(serializer.data.pop())
+
+    # POST
+    def create(self, request, *args, **kwargs):
+        print('aaaaa')
+        temperatura_humedad_data = request.data
+        print(temperatura_humedad_data)
+
+        # Verificamos existencia de pais
+        if not Pais.objects.filter(nombre_pais=temperatura_humedad_data['pais']):
+            new_pais = Pais.objects.create(nombre_pais=temperatura_humedad_data['pais'])
+            new_pais.save()
+
+            pais = Pais.objects.get(nombre_pais=temperatura_humedad_data['pais'])
+
+        else:
+            pais = Pais.objects.get(nombre_pais=temperatura_humedad_data['pais'])
+
+        # Verificamos existencia de ciudad
+        if not Ciudad.objects.filter(nombre_ciudad=temperatura_humedad_data['ciudad']):
+            mew_ciudad = Ciudad.objects.create(nombre_ciudad=temperatura_humedad_data['ciudad'], pais=pais)
+            mew_ciudad.save()
+
+            ciudad = Ciudad.objects.get(nombre_ciudad=temperatura_humedad_data['ciudad'])
+
+        else:
+            ciudad = Ciudad.objects.get(nombre_ciudad=temperatura_humedad_data['ciudad'])
+
+        new_temperatura_humedad = TemperaturaHumedad.objects.create(
+            ciudad=ciudad,
+            temperatura=temperatura_humedad_data['temperatura'],
+            humedad=temperatura_humedad_data['humedad']
+        )
+
+        new_temperatura_humedad.save()
+
+        serializer = CiudadSerializer(new_temperatura_humedad)
+        print(serializer)
+
+        return Response(
+            {'message': f'Se ha registrado correctamente la temperatura y humedad en: {temperatura_humedad_data["ciudad"]}'}
+        )
+
+    # DELETE
     def destroy(self, request, *args, **kwargs):
 
-        temperatura_humedad = self.get_object()
-        temperatura_humedad.delete()
+        params = kwargs
+        print(f'-> {params["pk"]}')
 
-        return Response({'message': 'Se ha eliminado correctamente la ciudad'})
+        try:
+            ciudad = Ciudad.objects.filter(id=params["pk"])
+            ciudad.delete()
+
+            return Response(
+                {'message': 'Se ha eliminado correctamente la ciudad'}
+            )
+
+        except:
+            ciudad = Ciudad.objects.filter(nombre_ciudad=params["pk"])
+            ciudad.delete()
+
+            return Response(
+                {'message': 'Se ha eliminado correctamente la ciudad'}
+            )
+
+    # UPDATE
+    def update(self, request, *args, **kwargs):
+
+        params = kwargs
+        print(f'-> {params["pk"]}')
+
+        ciudad_data = request.data
+
+        if not Pais.objects.filter(nombre_pais=ciudad_data['pais']):
+            new_pais = Pais.objects.create(nombre_pais=ciudad_data['pais'])
+            new_pais.save()
+
+            pais = Pais.objects.get(nombre_pais=ciudad_data['pais'])
+
+        else:
+            pais = Pais.objects.get(nombre_pais=ciudad_data['pais'])
+
+        try:
+            ciudad = Ciudad.objects.filter(id=params["pk"])
+            print(ciudad)
+            ciudad.update(nombre_ciudad=ciudad_data['nombre_ciudad'])
+            ciudad.update(pais=pais)
+
+            return Response(
+                {'message': 'Se ha actualizado correctamente la ciudad'}
+            )
+
+        except:
+            ciudad = Ciudad.objects.filter(nombre_ciudad=params["pk"])
+            print(ciudad)
+            ciudad.update(nombre_ciudad=ciudad_data['nombre_ciudad'])
+            ciudad.update(pais=pais)
+
+            return Response(
+                {'message': 'Se ha actualizado correctamente la ciudad'}
+            )
