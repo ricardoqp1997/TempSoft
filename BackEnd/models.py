@@ -31,6 +31,7 @@ class Ciudad(models.Model):
     pais = models.ForeignKey(
         Pais,
         verbose_name='País',
+        related_name='pais_nombre',
         on_delete=models.CASCADE
     )
 
